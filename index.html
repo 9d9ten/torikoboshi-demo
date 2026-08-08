@@ -127,8 +127,15 @@ select.input {
   padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 50;
 }
-.admin-brand { font-weight: 700; font-size: 16px; letter-spacing: .02em; }
-.admin-brand span { color: var(--text-muted); font-weight: 400; }
+.admin-brand { display: flex; align-items: center; min-width: 0; font-weight: 700; font-size: 16px; letter-spacing: .02em; }
+.admin-product-logo { display: inline-flex; align-items: baseline; gap: 6px; flex: none; color: var(--text); line-height: 1; white-space: nowrap; }
+.admin-product-logo__house { color: var(--text-secondary); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+.admin-product-logo__name { font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+.admin-brand__divider { width: 1px; height: 18px; margin: 0 12px; background: var(--border-strong); flex: none; }
+.admin-brand__context { min-width: 0; overflow: hidden; color: var(--text); text-overflow: ellipsis; white-space: nowrap; }
+.admin-brand__context span { color: var(--text-muted); font-weight: 400; }
+.admin-brand__custom-logo { display: inline-block; height: 22px; width: auto; margin-right: 7px; vertical-align: middle; }
+.admin-gate-brand { display:flex; justify-content:center; margin: 0 0 18px; }
 .admin-wrap { max-width: 1140px; margin: 0 auto; padding: 36px 32px 80px; }
 .admin-title { font-size: 26px; font-weight: 700; }
 .admin-sub { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
@@ -706,6 +713,9 @@ select.input {
 @media (max-width: 640px) {
   .admin-nav-item { padding: 13px 16px; font-size: 14px; }
   .admin-card-list { grid-template-columns: 1fr; }
+  .admin-product-logo__house { font-size: 9px; }
+  .admin-product-logo__name { font-size: 14px; }
+  .admin-brand__divider { margin: 0 8px; }
 }
 
 /* サービスのカスタムタグ（キャンペーン・トライアル・期間限定など） */
@@ -3813,10 +3823,17 @@ function bindImgFallbacks(root) { root.querySelectorAll('img').forEach(imgFallba
 function isAdminAuthed() {
   try { return !!sessionStorage.getItem('pds_admin_token'); } catch (e) { return false; }
 }
+function adminProductLogoHTML() {
+  return '<span class="admin-product-logo" aria-label="写真納品帖"><span class="admin-product-logo__house">9d9ai</span><span class="admin-product-logo__name">写真納品帖</span></span>';
+}
+function adminBrandHTML(label) {
+  return `<div class="admin-brand">${adminProductLogoHTML()}<span class="admin-brand__divider" aria-hidden="true"></span><span class="admin-brand__context">${label}</span></div>`;
+}
 function adminGate(onSuccess) {
   hideLoading();
   const v = el(`<div class="center-page">
     <div class="pw-box">
+      <div class="admin-gate-brand">${adminProductLogoHTML()}</div>
       <div class="lock">🔐</div>
       <h1>管理画面</h1>
       <p style="text-align:center;color:var(--text-secondary)">管理パスワードを入力してください</p>
@@ -3987,7 +4004,7 @@ function drawOrdersAdmin(r) {
 
   const v = el(`<div>
     <header class="admin-header">
-      <div class="admin-brand">${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span></div>
+      ${adminBrandHTML(`${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span>`)}
       <div></div>
     </header>
     ${adminNavHTML('orders')}
@@ -4087,7 +4104,7 @@ function drawCustomersAdmin(r) {
 
   const v = el(`<div>
     <header class="admin-header">
-      <div class="admin-brand">${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span></div>
+      ${adminBrandHTML(`${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span>`)}
       <div></div>
     </header>
     ${adminNavHTML('customers')}
@@ -4213,7 +4230,7 @@ async function viewSettingsAdmin() {
 
   const v = el(`<div>
     <header class="admin-header">
-      <div class="admin-brand">${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span></div>
+      ${adminBrandHTML(`${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span>`)}
       <div></div>
     </header>
     ${adminNavHTML('settings')}
@@ -4322,7 +4339,7 @@ function drawAdminAlbums(albums) {
 
   const wrap = el(`<div>
     <header class="admin-header">
-      <div class="admin-brand">${Backend.SITE.logo ? `<img src="${Backend.SITE.logo}" alt="" style="height:28px;vertical-align:middle;margin-right:8px">` : ''}${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span></div>
+      ${adminBrandHTML(`${Backend.SITE.logo ? `<img src="${Backend.SITE.logo}" alt="" class="admin-brand__custom-logo">` : ''}${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span>`)}
       <div></div>
     </header>
     ${adminNavHTML('albums')}
@@ -5273,7 +5290,7 @@ async function viewSelectionResults(id) {
   `;
   const v = el(`<div>
     <header class="admin-header">
-      <div class="admin-brand">${esc(a.name)} <span>・選定結果</span></div>
+      ${adminBrandHTML(`${esc(a.name)} <span>・選定結果</span>`)}
       <button class="btn btn-ghost btn-sm" id="back">← 一覧へ</button>
     </header>
     <div class="admin-wrap" style="max-width:900px">
@@ -5316,7 +5333,7 @@ async function viewServicesAdmin() {
 
   const v = el(`<div>
     <header class="admin-header">
-      <div class="admin-brand">${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span></div>
+      ${adminBrandHTML(`${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span>`)}
       <div></div>
     </header>
     ${adminNavHTML('services')}
@@ -5548,7 +5565,7 @@ async function viewNewsAdmin() {
 
   const v = el(`<div>
     <header class="admin-header">
-      <div class="admin-brand">${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span></div>
+      ${adminBrandHTML(`${esc(Backend.SITE.brand)} <span>${esc(Backend.SITE.sub)}・管理画面</span>`)}
       <div></div>
     </header>
     ${adminNavHTML('news')}
