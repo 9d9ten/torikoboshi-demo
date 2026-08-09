@@ -3332,7 +3332,7 @@ if (typeof window !== 'undefined') window.qrcode = qrcode;
           createdAt: todayStr(-8) },
         { id: 'nw_photobook', title: '今の写真を、フォトブックにしませんか', category: 'campaign',
           serviceId: 'sv_photobook', ctaLabel: 'フォトブックを見る', url: '', image: 'photos/svc-photobook.jpg',
-          body: 'このアルバムの写真から、お好きな25〜35枚を選んでフォトブックをお作りできます。\n\n・A5スクエア / 24ページ / ハードカバー\n・表紙のお写真もお選びいただけます（おまかせも承ります）\n・修正1回無料\n・お届けまで2〜3週間\n\nお子様の成長の記録に、一冊いかがでしょうか。\nご注文は、このアルバムの中でそのまま完了します。',
+          body: 'このアルバムの写真から、お好きな25〜35枚を選んでフォトブックをお作りできます。\n\n・A5スクエア / 24ページ / ハードカバー\n・表紙のお写真もお選びいただけます（おまかせも承ります）\n・修正1回無料\n・お届けまで2〜3週間\n\nお子様の成長の記録に、一冊いかがでしょうか。\nご注文は、このアルバムの中からそのままお申し込みいただけます。',
           createdAt: todayStr(-45) },
         { id: 'nw_next', title: '次の記念日も、一緒に残しませんか', category: 'event',
           url: '', image: 'photos/news-seasons.jpg',
@@ -3341,6 +3341,10 @@ if (typeof window !== 'undefined') window.qrcode = qrcode;
       ],
     },
   };
+
+  // LP素材の撮影用フック。Playwright等が addInitScript で window.__DEMO_NEWS__ を
+  // 差し込むと、お知らせの内容だけを掲載例に差し替えて実画面を撮影できる（実装は本物のまま）
+  if (window.__DEMO_NEWS__) state.content.news = window.__DEMO_NEWS__;
 
   function findAlbum(id) {
     var a = state.albums.find(function (x) { return x.id === id; });
